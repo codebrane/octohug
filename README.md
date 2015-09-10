@@ -27,5 +27,11 @@ you'll now have a ~/octo/blog/content/post directory
 </pre>
 if there are octopress header attributes octohug doesn't know about they'll end up in the hugo header. Fork/fix to suit.
 
+## sorting the feed
+the octopress feed is at atom.xml while the hugo one is at index.xml so I needed an entry in .htaccess:
+<pre>
+	RedirectMatch 301 ^/blog/atom.xml$ http://codebrane.com/blog/index.xml
+</pre>
+
 ## give octopress a big hug
 octopress got me out of wordpress. It's been superb and a great introduction to static blogs and sites. So long octopress and thanks for al the posts!
