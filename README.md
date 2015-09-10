@@ -23,7 +23,7 @@ let's say you have an octopress blog in ~/octo/blog and a shiny new, empty hugo 
 </pre>
 you'll now have a ~/octo/blog/content/post directory
 <pre>
-	cp -r ~/octo/blog/content/post ~/hugo/bog/content
+	cp -r ~/octo/blog/content/post ~/hugo/blog/content
 </pre>
 if there are octopress header attributes octohug doesn't know about they'll end up in the hugo header. Fork/fix to suit.
 
