@@ -139,11 +139,13 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 			hugoFileWriter.WriteString("Tags = [")
 		} else if inTags {
 			matches = octopressCategoryOrTagNameRegex.FindStringSubmatch(octopressLineAsString)
-			if firstTagAdded {
-				hugoFileWriter.WriteString(", ")
+			if len(matches) > 1 {
+				if firstTagAdded {
+					hugoFileWriter.WriteString(", ")
+				}
+				hugoFileWriter.WriteString("\"" + matches[1] + "\"")
+				firstTagAdded = true
 			}
-			hugoFileWriter.WriteString("\"" + matches[1] + "\"")
-			firstTagAdded = true
 		} else if strings.Contains(octopressLineAsString, "date: ") {
 			parts := strings.Split(octopressLineAsString, " ")
 			hugoFileWriter.WriteString("date = \"" + parts[1] + "\"\n")
