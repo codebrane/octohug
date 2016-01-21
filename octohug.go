@@ -142,7 +142,9 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 			if firstTagAdded {
 				hugoFileWriter.WriteString(", ")
 			}
-			hugoFileWriter.WriteString("\"" + matches[1] + "\"")
+			tag := strings.Replace(matches[1], "'", "", -1)
+			tag = strings.Replace(tag, "\"", "", -1)
+			hugoFileWriter.WriteString("\"" + tag + "\"")
 			firstTagAdded = true
 		} else if strings.Contains(octopressLineAsString, "date: ") {
 			parts := strings.Split(octopressLineAsString, " ")
