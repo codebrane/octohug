@@ -1,6 +1,6 @@
 //
 // octohug
-// 
+//
 // copies octopress posts to hugo posts
 //   converts the header
 //   converts categories and tags to hugo format in header
@@ -11,12 +11,12 @@
 package main
 
 import (
-  "path/filepath"
-  "os"
-  "flag"
-  "fmt"
-	"regexp"
 	"bufio"
+	"flag"
+	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -38,20 +38,20 @@ func readFile(path string) (string, error) {
 	}
 	if isPrefix {
 		fmt.Println("buffer size too small")
-		return "",nil
+		return "", nil
 	}
-	
-	return string(buffer),nil
+
+	return string(buffer), nil
 }
 
 func visit(path string, fileInfo os.FileInfo, err error) error {
 	if fileInfo.IsDir() {
-		return nil;
+		return nil
 	}
-	
+
 	// Get the base filename of the post
 	octopressFilename := filepath.Base(path)
-	
+
 	// Need to strip off the initial date and final .markdown from the post filename
 	regex := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}-(.*).markdown`)
 	matches := regex.FindStringSubmatch(octopressFilename)
@@ -59,21 +59,21 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 	hugoFilename := hugoPostDirectory + "/" + octopressFilenameWithoutExtension + ".md"
 	fmt.Println(path)
 	fmt.Printf("%v\n", hugoFilename)
-	
+
 	// Open the octopress file
 	octopressFile, octopressFileError := os.Open(path)
-	if (octopressFileError != nil) {
+	if octopressFileError != nil {
 	}
 	defer octopressFile.Close()
-	
+
 	// Create the hugo file
 	hugoFile, hugoFileError := os.Create(hugoFilename)
-	if (hugoFileError != nil) {
+	if hugoFileError != nil {
 		fmt.Printf("could not create hugo file: %v\n", hugoFileError)
 	}
 	defer hugoFile.Close()
 	hugoFileWriter := bufio.NewWriter(hugoFile)
-	
+
 	// octopressDateRegex := regexp.MustCompile(`^date:`)
 	octopressCategoryOrTagNameRegex := regexp.MustCompile(`^- (.*)`)
 
@@ -96,7 +96,7 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 			}
 			octopressLineAsString = string("+++")
 		}
-		
+
 		if strings.Contains(octopressLineAsString, "categories:") {
 			inCategories = true
 			hugoFileWriter.WriteString("Categories = [")
@@ -117,7 +117,7 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 			parts := strings.Split(octopressLineAsString, ": ")
 			keywords := strings.Split(strings.Replace(parts[1], "\"", "", -1), ",")
 			firstKeyword := true
-			for _ , keyword := range keywords {
+			for _, keyword := range keywords {
 				if !firstKeyword {
 					hugoFileWriter.WriteString(",")
 				}
@@ -139,8 +139,12 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 			hugoFileWriter.WriteString("Tags = [")
 		} else if inTags {
 			matches = octopressCategoryOrTagNameRegex.FindStringSubmatch(octopressLineAsString)
-			if firstTagAdded {
-				hugoFileWriter.WriteString(", ")
+			if len(matches) > 1 {
+				if firstTagAdded {
+					hugoFileWriter.WriteString(", ")
+				}
+				hugoFileWriter.WriteString("\"" + matches[1] + "\"")
+				firstTagAdded = true
 			}
 			tag := strings.Replace(matches[1], "'", "", -1)
 			tag = strings.Replace(tag, "\"", "", -1)
@@ -155,7 +159,7 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 			parts := strings.Split(octopressFilenameWithoutExtension, "-")
 			hugoFileWriter.WriteString("title = \"")
 			firstPart := true
-			for _ , part := range parts {
+			for _, part := range parts {
 				if !firstPart {
 					hugoFileWriter.WriteString(" ")
 				}
@@ -179,15 +183,15 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 			// {% include_code [RedViewController.m] lang:objectivec slidernav/RedViewController.m %}
 			// or
 			// {% include_code [RedViewController.m] slidernav/RedViewController.m %}
-			codeFilePath := "source/downloads/code/" + parts[len(parts) - 2]
-			codeFileContent,_ := readFile(codeFilePath)
+			codeFilePath := "source/downloads/code/" + parts[len(parts)-2]
+			codeFileContent, _ := readFile(codeFilePath)
 			codeFileContent = strings.Replace(codeFileContent, "<", "&lt;", -1)
 			codeFileContent = strings.Replace(codeFileContent, ">", "&gt;", -1)
 			hugoFileWriter.WriteString("<pre><code>\n" + codeFileContent + "</code></pre>\n")
 		} else {
 			hugoFileWriter.WriteString(octopressLineAsString + "\n")
 		} // if octopressLineAsString == "categories:"
-		
+
 		hugoFileWriter.Flush()
 		octopressLine, isPrefix, lineError = octopressFileReader.ReadLine()
 	}
@@ -195,8 +199,8 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 		fmt.Println("buffer size too small")
 		return nil
 	}
-	
-  return nil
+
+	return nil
 }
 
 var helpFlag string
@@ -209,12 +213,12 @@ func init() {
 
 func main() {
 	flag.Parse()
-		
+
 	if helpFlag == "" {
 		flag.PrintDefaults()
 		return
 	}
-		
+
 	os.MkdirAll(hugoPostDirectory, 0777)
-  filepath.Walk(octopressPostsDirectory, visit)
+	filepath.Walk(octopressPostsDirectory, visit)
 }
