@@ -153,6 +153,9 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 		} else if strings.Contains(octopressLineAsString, "date: ") {
 			parts := strings.Split(octopressLineAsString, " ")
 			hugoFileWriter.WriteString("date = \"" + parts[1] + "\"\n")
+			octoSlugDate := strings.Replace(parts[1], "-", "/", -1)
+			octoFriendlySlug := octoSlugDate + "/" + octopressFilenameWithoutExtension
+			hugoFileWriter.WriteString("slug = \"" + octoFriendlySlug + "\"\n")
 		} else if strings.Contains(octopressLineAsString, "title: ") {
 			// to keep the urls the same as octopress, the title
 			// needs to be the filename
