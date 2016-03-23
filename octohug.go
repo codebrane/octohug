@@ -53,7 +53,7 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 	octopressFilename := filepath.Base(path)
 
 	// Need to strip off the initial date and final .markdown from the post filename
-	regex := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}-(.*).markdown`)
+	regex := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}-(.*).m(arkdown|d)`)
 	matches := regex.FindStringSubmatch(octopressFilename)
 	octopressFilenameWithoutExtension := matches[1]
 	hugoFilename := hugoPostDirectory + "/" + octopressFilenameWithoutExtension + ".md"
