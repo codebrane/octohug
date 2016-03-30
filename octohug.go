@@ -211,21 +211,13 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 	return nil
 }
 
-var helpFlag string
-
 func init() {
 	flag.StringVar(&octopressPostsDirectory, "octo", "source/_posts", "path to octopress posts directory")
 	flag.StringVar(&hugoPostDirectory, "hugo", "content/post", "path to hugo post directory")
-	flag.StringVar(&helpFlag, "h", "show", "help")
 }
 
 func main() {
 	flag.Parse()
-
-	if helpFlag == "" {
-		flag.PrintDefaults()
-		return
-	}
 
 	os.MkdirAll(hugoPostDirectory, 0777)
 	filepath.Walk(octopressPostsDirectory, visit)
