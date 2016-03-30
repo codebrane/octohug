@@ -37,7 +37,7 @@ func readFile(path string) (string, error) {
 		line, isPrefix, lineError = fileReader.ReadLine()
 	}
 	if isPrefix {
-		fmt.Println("buffer size too small")
+		fmt.Fprintln(os.Stderr, "buffer size too small")
 		return "", nil
 	}
 
@@ -62,19 +62,22 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 	}
 	octopressFilenameWithoutExtension := matches[1]
 	hugoFilename := hugoPostDirectory + "/" + octopressFilenameWithoutExtension + ".md"
-	fmt.Println(path)
-	fmt.Printf("%v\n", hugoFilename)
+	fmt.Printf("%s\n%s\n", path, hugoFilename)
 
 	// Open the octopress file
 	octopressFile, octopressFileError := os.Open(path)
+	// Nothing to do if we can open the source file
 	if octopressFileError != nil {
+		fmt.Fprintf(os.Stderr, "Error opening octopress file %s, ignoring\n", path)
+		return nil
 	}
 	defer octopressFile.Close()
 
 	// Create the hugo file
 	hugoFile, hugoFileError := os.Create(hugoFilename)
 	if hugoFileError != nil {
-		fmt.Printf("could not create hugo file: %v\n", hugoFileError)
+		fmt.Fprintf(os.Stderr, "could not create hugo file: %v\n", hugoFileError)
+		return nil
 	}
 	defer hugoFile.Close()
 	hugoFileWriter := bufio.NewWriter(hugoFile)
@@ -204,10 +207,8 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 		octopressLine, isPrefix, lineError = octopressFileReader.ReadLine()
 	}
 	if isPrefix {
-		fmt.Println("buffer size too small")
-		return nil
+		fmt.Fprintln(os.Stderr, "buffer size too small")
 	}
-
 	return nil
 }
 
