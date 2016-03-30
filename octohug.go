@@ -67,7 +67,11 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 
 	// Open the octopress file
 	octopressFile, octopressFileError := os.Open(path)
+	
+	// Nothing to do if we can open the source file
 	if octopressFileError != nil {
+		fmt.Printf("Error opening octopress file %s, ignoring\n", path)
+		return nil
 	}
 	defer octopressFile.Close()
 
