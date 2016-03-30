@@ -220,6 +220,11 @@ func init() {
 func main() {
 	flag.Parse()
 
+	// Check that we can trust octopressPostsDirectory
+	if _, err := os.Stat(octopressPostsDirectory); err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading directory: %v\n", err)
+		os.Exit(-1)
+	}
 	os.MkdirAll(hugoPostDirectory, 0777)
 	filepath.Walk(octopressPostsDirectory, visit)
 }
