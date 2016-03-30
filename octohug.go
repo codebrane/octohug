@@ -58,6 +58,7 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 
 	// Ignore non-matching filenames (i.e. do no dereference nil)
 	if matches == nil {
+		return nil
 	}
 	octopressFilenameWithoutExtension := matches[1]
 	hugoFilename := hugoPostDirectory + "/" + octopressFilenameWithoutExtension + ".md"
