@@ -62,12 +62,10 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 	}
 	octopressFilenameWithoutExtension := matches[1]
 	hugoFilename := hugoPostDirectory + "/" + octopressFilenameWithoutExtension + ".md"
-	fmt.Println(path)
-	fmt.Printf("%v\n", hugoFilename)
+	fmt.Printf("%s\n%s\n", path, hugoFilename)
 
 	// Open the octopress file
 	octopressFile, octopressFileError := os.Open(path)
-	
 	// Nothing to do if we can open the source file
 	if octopressFileError != nil {
 		fmt.Printf("Error opening octopress file %s, ignoring\n", path)
