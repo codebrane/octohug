@@ -77,6 +77,7 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 	hugoFile, hugoFileError := os.Create(hugoFilename)
 	if hugoFileError != nil {
 		fmt.Fprintf(os.Stderr, "could not create hugo file: %v\n", hugoFileError)
+		return nil
 	}
 	defer hugoFile.Close()
 	hugoFileWriter := bufio.NewWriter(hugoFile)
