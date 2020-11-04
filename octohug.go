@@ -18,6 +18,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/igorsobreira/titlecase"
 )
 
 var octopressPostsDirectory string
@@ -145,7 +147,7 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 		} else if octopressLineAsString == "tags:" {
 			inTags = true
 			hugoFileWriter.WriteString("Tags = [")
-		} else if inTags {
+		} else if inTags && !inCategories {
 			matches = octopressCategoryOrTagNameRegex.FindStringSubmatch(octopressLineAsString)
 			if len(matches) > 1 {
 				if firstTagAdded {
@@ -153,11 +155,12 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 				}
 				hugoFileWriter.WriteString("\"" + matches[1] + "\"")
 				firstTagAdded = true
+			} else {
+				tag := strings.Replace(matches[1], "'", "", -1)
+				tag = strings.Replace(tag, "\"", "", -1)
+				hugoFileWriter.WriteString("\"" + tag + "\"")
+				firstTagAdded = true
 			}
-			tag := strings.Replace(matches[1], "'", "", -1)
-			tag = strings.Replace(tag, "\"", "", -1)
-			hugoFileWriter.WriteString("\"" + tag + "\"")
-			firstTagAdded = true
 		} else if strings.Contains(octopressLineAsString, "date: ") {
 			parts := strings.Split(octopressLineAsString, " ")
 			hugoFileWriter.WriteString("date = \"" + parts[1] + "\"\n")
@@ -170,14 +173,17 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 			parts := strings.Split(octopressFilenameWithoutExtension, "-")
 			hugoFileWriter.WriteString("title = \"")
 			firstPart := true
+			title := ""
 			for _, part := range parts {
 				if !firstPart {
-					hugoFileWriter.WriteString(" ")
+					title += " "
 				}
-				hugoFileWriter.WriteString(part)
+				title += part
 				firstPart = false
 			}
-			hugoFileWriter.WriteString("\"\n")
+			title += "\"\n"
+			title = titlecase.Title(title)
+			hugoFileWriter.WriteString(title)
 		} else if strings.Contains(octopressLineAsString, "description: ") {
 			parts := strings.Split(octopressLineAsString, ": ")
 			hugoFileWriter.WriteString("description = " + parts[1] + "\n")
