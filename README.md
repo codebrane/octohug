@@ -16,7 +16,7 @@ octohug ignores a lot of octopress headers as I don't use them. Fork and change 
 ## what to do
 let's say you have an octopress blog in ~/octo/blog and a shiny new, empty hugo blog in ~/hugo/blog.
 <pre>
-	go build octohug.go
+	go build 
 	cp octohug ~/octo/blog
 	cd ~/octo/blog
 	./octohug
