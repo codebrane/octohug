@@ -155,7 +155,7 @@ func visit(path string, fileInfo os.FileInfo, err error) error {
 				}
 				hugoFileWriter.WriteString("\"" + matches[1] + "\"")
 				firstTagAdded = true
-			} else {
+			} else if matches != nil {
 				tag := strings.Replace(matches[1], "'", "", -1)
 				tag = strings.Replace(tag, "\"", "", -1)
 				hugoFileWriter.WriteString("\"" + tag + "\"")
